@@ -11,6 +11,10 @@ let sequence = [];
 let playingSequence = false; 
 let currentLoopIndex = 0;
 
+let recorder, soundFile;
+let isRecording = false;
+let saveButton;
+
 
 function preload() {
   
@@ -47,6 +51,10 @@ function preload() {
 function setup() {
   createCanvas(250, 800);
   background('#202020');
+  
+  recorder = new p5.SoundRecorder();
+soundFile = new p5.SoundFile();
+
   let input = createInput();
   input.position(20, 65);
 
@@ -58,9 +66,13 @@ function setup() {
     }
   });
 
+saveButton = createButton("Start Recording");
+saveButton.position(20, 280);  // Adjust the position as you like
+saveButton.mousePressed(toggleRecording);
 
-loopButton = createButton('Play');
-loopButton.position(20, 100);
+
+loopButton = createButton('Test Playing');
+loopButton.position(20, 120);
 loopButton.mousePressed(function() {
   if (looping) {
     looping = false;
@@ -80,13 +92,13 @@ loopButton.mousePressed(function() {
 
 
   delaySlider = createSlider(0, 500, 50);
-  delaySlider.position(20, 190);
+  delaySlider.position(20, 170);
   delaySlider.style('width', '200px'); 
   delaySlider.style('background-color', '#FF5722'); 
   delaySlider.style('-webkit-slider-thumb', 'background-color: #009688; width: 20px; height: 20px;');
 
   delayEffectButton = createButton('Activate Delay');
-  delayEffectButton.position(118, 100);
+  delayEffectButton.position(152, 120);
   delayEffectButton.mousePressed(function() {
     delayActive = !delayActive;  
     delayEffectButton.html(delayActive ? 'Deactivate Delay' : 'Activate Delay');  // update the button text
@@ -108,7 +120,7 @@ sequenceButton.mousePressed(function() {
 
 
 playSequenceButton = createButton('Play Sequence');
-playSequenceButton.position(20, 280);
+playSequenceButton.position(135, 230);
 playSequenceButton.style('background-color', '#FF5722'); 
 playSequenceButton.mousePressed(function() {
   playingSequence = !playingSequence; 
@@ -168,20 +180,25 @@ function draw() {
       sounds[key].stop();
     }
 
-    if (characters[loopIndex] !== ' ') {  
-      let soundToPlay = sounds[`Key${characters[loopIndex]}`];
-      if (soundToPlay) {
-        soundToPlay.play();
-        
-        if (delayActive) {
-          delay.process(soundToPlay, 0.5, 0.6, 3300);
-        } else {
-          
-          delay.feedback(0);
-          delay.delayTime(0);
-        }
-      }
+  if (characters[loopIndex] !== ' ') {  
+  let soundToPlay = sounds[`Key${characters[loopIndex]}`];
+  if (soundToPlay) {
+    soundToPlay.play();
+
+    // Add this line to route the sound through the recorder
+    if (isRecording) {
+      recorder.setInput(soundToPlay);
     }
+    
+    if (delayActive) {
+      delay.process(soundToPlay, 0.5, 0.6, 3300);
+    } else {
+      delay.feedback(0);
+      delay.delayTime(0);
+    }
+  }
+}
+
 
     loopIndex++; 
     setTimeout(function() {
@@ -224,3 +241,17 @@ function stopAllSounds() {
     sounds[key].stop();
   }
 }
+
+function toggleRecording() {
+  if (!isRecording) {
+    recorder.record(soundFile);
+    saveButton.html('Stop Recording');
+    isRecording = true;
+  } else {
+    recorder.stop();
+    saveButton.html('Download Recording');
+    soundFile.save('XhabarabotTypedSequence.wav');
+    isRecording = false;
+  }
+}
+
