@@ -1,3 +1,6 @@
+// Typex 1.2
+// Created by Rully Shabara
+
 let sounds = {};
 let loopButton, stopButton, delaySlider, delayEffectButton;
 let looping = false;
@@ -67,7 +70,7 @@ soundFile = new p5.SoundFile();
   });
 
 saveButton = createButton("Start Recording");
-saveButton.position(20, 280);  // Adjust the position as you like
+saveButton.position(20, 280);  
 saveButton.mousePressed(toggleRecording);
 
 
@@ -93,15 +96,16 @@ loopButton.mousePressed(function() {
 
   delaySlider = createSlider(0, 500, 50);
   delaySlider.position(20, 170);
+  delaySlider.class('slick-slider');
   delaySlider.style('width', '200px'); 
-  delaySlider.style('background-color', '#FF5722'); 
-  delaySlider.style('-webkit-slider-thumb', 'background-color: #009688; width: 20px; height: 20px;');
+  delaySlider.style('background-color', '#8F8988'); 
+  delaySlider.style('-webkit-slider-thumb', 'background-color: #009688; width: 20px; height: 5px;');
 
   delayEffectButton = createButton('Activate Delay');
   delayEffectButton.position(152, 120);
   delayEffectButton.mousePressed(function() {
     delayActive = !delayActive;  
-    delayEffectButton.html(delayActive ? 'Deactivate Delay' : 'Activate Delay');  // update the button text
+    delayEffectButton.html(delayActive ? 'Deactivate Delay' : 'Activate Delay');  
   });
 
   // set up the delay effect
@@ -113,7 +117,7 @@ sequenceButton = createButton('Add to Sequence');
 sequenceButton.position(20, 230);
 sequenceButton.style('background-color', '#009688'); 
 sequenceButton.mousePressed(function() {
-  // Add the current loop to the sequence
+  
   sequence.splice(currentLoopIndex + 1, 0, [...characters]); 
   console.log('Current sequence:', sequence);  
 });
@@ -134,7 +138,9 @@ playSequenceButton.mousePressed(function() {
 });
 
 
-  
+  let refreshButton = createButton('REFRESH');
+  refreshButton.position(20, 350); 
+  refreshButton.mousePressed(() => window.location.reload());
 
 }
 
@@ -185,7 +191,7 @@ function draw() {
   if (soundToPlay) {
     soundToPlay.play();
 
-    // Add this line to route the sound through the recorder
+    
     if (isRecording) {
       recorder.setInput(soundToPlay);
     }
@@ -254,4 +260,3 @@ function toggleRecording() {
     isRecording = false;
   }
 }
-
